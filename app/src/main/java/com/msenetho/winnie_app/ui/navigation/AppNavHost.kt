@@ -13,12 +13,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.msenetho.winnie_app.ui.customspeech.CustomSpeechScreen
-import com.msenetho.winnie_app.ui.library.ClipLibraryScreen
-import com.msenetho.winnie_app.domain.model.VoiceClip
+import com.msenetho.winnie_app.ui.library.ClipLibraryRoute
 
 enum class AppScreen(val route: String, val label: String) {
     Quotes("quotes", "Quotes"),
-    TTS("tts", "Text-to-Speech")
+    Tts("tts", "Text-to-Speech")
 }
 
 @Composable
@@ -44,15 +43,15 @@ fun AppNavHost() {
                 )
 
                 NavigationBarItem(
-                    selected = currentRoute == AppScreen.TTS.route,
+                    selected = currentRoute == AppScreen.Tts.route,
                     onClick = {
-                        if (currentRoute != AppScreen.TTS.route) {
-                            navController.navigate(AppScreen.TTS.route) {
+                        if (currentRoute != AppScreen.Tts.route) {
+                            navController.navigate(AppScreen.Tts.route) {
                                 launchSingleTop = true
                             }
                         }
                     },
-                    label = { Text(AppScreen.TTS.label) },
+                    label = { Text(AppScreen.Tts.label) },
                     icon = { Text("T") } // placeholder for icon image
                 )
             }
@@ -64,20 +63,9 @@ fun AppNavHost() {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(AppScreen.Quotes.route) {
-                ClipLibraryScreen(
-                    clips = listOf(
-                        VoiceClip(
-                            title = "think think think",
-                            assetPath = "audio/think_think_think.mp3"
-                        ),
-                        VoiceClip(
-                            title = "winnie the pooh",
-                            assetPath = "audio/winnie_the_pooh.mp3"
-                        )
-                    )
-                )
+                ClipLibraryRoute()
             }
-            composable(AppScreen.TTS.route) {
+            composable(AppScreen.Tts.route) {
                 CustomSpeechScreen()
             }
         }

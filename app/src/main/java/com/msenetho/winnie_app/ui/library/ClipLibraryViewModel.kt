@@ -35,7 +35,7 @@ class ClipLibraryViewModel(
                 clips = clips,
                 isLoading = false
             )
-        } catch (error: Exception) {
+        } catch (_: Exception) {
             _uiState.value = ClipLibraryUIState(
                 isLoading = false,
                 errorMessage = "Could not load voice clips"

@@ -15,6 +15,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.msenetho.winnie_app.domain.model.VoiceClip
 
@@ -23,7 +25,9 @@ fun ClipLibraryScreen(
     clips: List<VoiceClip>,
     isLoading: Boolean,
     errorMessage: String?,
+    currentlyPlayingAssetPath: String?,
     onClipClicked: (VoiceClip) -> Unit,
+    onStopClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -50,15 +54,40 @@ fun ClipLibraryScreen(
             }
 
             else -> {
-                clips.forEach { clip ->
-                    Button(
-                        onClick = { onClipClicked(clip) },
-                        modifier = Modifier.fillMaxWidth(0.80f)
-                    ) {
-                        Text(clip.title)
-                    }
+                LazyColumn(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    items(clips) { clip ->
+                        val isClipPlaying = clip.assetPath == currentlyPlayingAssetPath
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                        Button(
+                            onClick = { onClipClicked(clip) },
+                            modifier = Modifier.fillMaxWidth(0.80f)
+                        ) {
+                            Text(
+                                if (isClipPlaying) {
+                                    "Playing: ${clip.title}"
+                                } else {
+                                    clip.title
+                                }
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Button(
+                    onClick = onStopClicked,
+                    enabled = currentlyPlayingAssetPath != null,
+                    modifier = modifier.fillMaxWidth(0.80f)
+                ) {
+                    Text("Stop")
                 }
             }
         }
@@ -75,6 +104,8 @@ fun ClipLibraryRoute(
         clips = uiState.clips,
         isLoading = uiState.isLoading,
         errorMessage = uiState.errorMessage,
-        onClipClicked = viewModel::onClipClicked
+        currentlyPlayingAssetPath = uiState.currentlyPlayingAssetPath,
+        onClipClicked = viewModel::onClipClicked,
+        onStopClicked = viewModel::onStopClicked
     )
 }

@@ -14,7 +14,13 @@ class ClipLibraryViewModel(
     application: Application
 ) : AndroidViewModel(application) {
     private val _uiState = MutableStateFlow(ClipLibraryUIState())
-    private val audioPlayer: AudioPlayer = MediaAudioPlayer(application)
+    private val audioPlayer: AudioPlayer = MediaAudioPlayer(application).apply {
+        onPlaybackEnded = {
+            _uiState.value = _uiState.value.copy(
+                currentlyPlayingAssetPath = null
+            )
+        }
+    }
     val uiState: StateFlow<ClipLibraryUIState> = _uiState.asStateFlow()
 
     init {
@@ -39,6 +45,18 @@ class ClipLibraryViewModel(
 
     fun onClipClicked(clip: VoiceClip) {
         audioPlayer.playAsset(clip.assetPath)
+
+        _uiState.value = _uiState.value.copy(
+            currentlyPlayingAssetPath = clip.assetPath
+        )
+    }
+
+    fun onStopClicked() {
+        audioPlayer.stop()
+
+        _uiState.value = _uiState.value.copy(
+            currentlyPlayingAssetPath = null
+        )
     }
 
     override fun onCleared() {

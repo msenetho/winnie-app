@@ -12,7 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.msenetho.winnie_app.ui.customspeech.CustomSpeechScreen
+import com.msenetho.winnie_app.ui.customspeech.CustomSpeechRoute
 import com.msenetho.winnie_app.ui.library.ClipLibraryRoute
 
 enum class AppScreen(val route: String, val label: String) {
@@ -66,7 +66,7 @@ fun AppNavHost() {
                 ClipLibraryRoute()
             }
             composable(AppScreen.Tts.route) {
-                CustomSpeechScreen()
+                CustomSpeechRoute()
             }
         }
     }

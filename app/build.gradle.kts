@@ -38,7 +38,8 @@ android {
 }
 
 dependencies {
-    implementation("androidx.navigation:navigation-compose:2.9.0")
+    implementation("androidx.navigation:navigation-compose:2.9.8")
+    implementation("androidx.media3:media3-exoplayer:1.10.1")
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)

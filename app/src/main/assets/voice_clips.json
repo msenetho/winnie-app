@@ -1,14 +1,10 @@
 [
   {
     "title": "Think Think Think",
-    "assetPath": "audio/think_001.mp3"
+    "assetPath": "audio/think_think_think.mp3"
   },
   {
-    "title": "Hello There",
-    "assetPath": "audio/hello_001.mp3"
-  },
-  {
-    "title": "Sadness",
-    "assetPath": "audio/im_sad_001.mp3"
+    "title": "Wrong",
+    "assetPath": "audio/incorrect_buzzer.mp3"
   }
 ]

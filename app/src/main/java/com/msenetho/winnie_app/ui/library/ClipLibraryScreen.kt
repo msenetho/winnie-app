@@ -23,6 +23,7 @@ fun ClipLibraryScreen(
     clips: List<VoiceClip>,
     isLoading: Boolean,
     errorMessage: String?,
+    onClipClicked: (VoiceClip) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -51,7 +52,7 @@ fun ClipLibraryScreen(
             else -> {
                 clips.forEach { clip ->
                     Button(
-                        onClick = {},
+                        onClick = { onClipClicked(clip) },
                         modifier = Modifier.fillMaxWidth(0.80f)
                     ) {
                         Text(clip.title)
@@ -73,6 +74,7 @@ fun ClipLibraryRoute(
     ClipLibraryScreen(
         clips = uiState.clips,
         isLoading = uiState.isLoading,
-        errorMessage = uiState.errorMessage
+        errorMessage = uiState.errorMessage,
+        onClipClicked = viewModel::onClipClicked
     )
 }

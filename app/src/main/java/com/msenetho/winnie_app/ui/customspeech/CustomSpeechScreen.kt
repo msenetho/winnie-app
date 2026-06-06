@@ -21,6 +21,7 @@ fun CustomSpeechScreen(
     uiState: CustomSpeechUIState,
     onPromptChanged: (String) -> Unit,
     onCreateClicked: () -> Unit,
+    onStopClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -42,7 +43,7 @@ fun CustomSpeechScreen(
             onValueChange = onPromptChanged,
             label = { Text("Enter line") },
             supportingText = {
-                Text("${uiState.maxChar - uiState.remainingChar}/${uiState.maxChar}")
+                Text("${uiState.maxChar - uiState.remainingChar} /${uiState.maxChar}")
             },
             isError = uiState.errorMessage != null,
             modifier = Modifier.fillMaxWidth(0.80f),
@@ -57,6 +58,14 @@ fun CustomSpeechScreen(
             modifier = Modifier.fillMaxWidth(0.80f)
         ) {
             Text(if (uiState.isGenerating) "Creating..." else "Create")
+        }
+
+        Button(
+            onClick = onStopClicked,
+            enabled = uiState.isPlaying,
+            modifier = Modifier.fillMaxWidth(0.80f)
+        ) {
+            Text("Stop")
         }
     }
 }

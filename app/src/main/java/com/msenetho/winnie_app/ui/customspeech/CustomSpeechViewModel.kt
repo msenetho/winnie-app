@@ -9,13 +9,13 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.msenetho.winnie_app.core.audio.AudioPlayer
 import com.msenetho.winnie_app.core.audio.MediaAudioPlayer
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.msenetho.winnie_app.data.tts.TTSRemoteDataSource
+import com.msenetho.winnie_app.data.tts.TTSRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlin.time.Duration.Companion.milliseconds
 
 class CustomSpeechViewModel(
     application: Application
@@ -29,6 +29,10 @@ class CustomSpeechViewModel(
             )
         }
     }
+
+    private val ttsRepo = TTSRepository(
+        TTSRemoteDataSource(application)
+    )
 
     fun onPromptChanged(newPrompt: String) {
         val maxChar = _uiState.value.maxChar
@@ -56,14 +60,21 @@ class CustomSpeechViewModel(
                 isPlaying = false
             )
 
-            delay(1000.milliseconds)
+            try {
+                val audioFile = ttsRepo.generateSpeech(state.prompt.trim())
 
-            audioPlayer.playAsset("audio/Boowomp.mp3")
+                audioPlayer.playFile(audioFile)
 
-            _uiState.value = _uiState.value.copy(
-                isGenerating = false,
-                isPlaying = true
-            )
+                _uiState.value = _uiState.value.copy(
+                    isGenerating = false,
+                    isPlaying = true
+                )
+            } catch (_: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    isGenerating = false,
+                    isPlaying = false
+                )
+            }
         }
     }
 

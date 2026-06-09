@@ -1,10 +1,30 @@
 [
   {
-    "title": "Think Think Think",
-    "assetPath": "audio/think_think_think.mp3"
+    "title": "Balloon",
+    "assetPath": "audio/balloon.mp3"
   },
   {
-    "title": "Wrong",
-    "assetPath": "audio/incorrect_buzzer.mp3"
+    "title": "Braver",
+    "assetPath": "audio/braver.mp3"
+  },
+  {
+    "title": "Disorganized",
+    "assetPath": "audio/disorganized.mp3"
+  },
+  {
+    "title": "In Your Heart",
+    "assetPath": "audio/heart_forever.mp3"
+  },
+  {
+    "title": "Life is a Journey",
+    "assetPath": "audio/life_journey.mp3"
+  },
+  {
+    "title": "One Hundred",
+    "assetPath": "audio/live_one_hundred.mp3"
+  },
+  {
+    "title": "Without a Friend",
+    "assetPath": "audio/without_friend.mp3"
   }
 ]

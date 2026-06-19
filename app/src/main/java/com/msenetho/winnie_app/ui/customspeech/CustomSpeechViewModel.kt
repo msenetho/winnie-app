@@ -16,6 +16,7 @@ import com.msenetho.winnie_app.data.tts.TTSRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import com.msenetho.winnie_app.domain.usecase.ValidatePromptUseCase
 
 class CustomSpeechViewModel(
     application: Application
@@ -34,13 +35,15 @@ class CustomSpeechViewModel(
         TTSRemoteDataSource(application)
     )
 
+    private val validatePromptUseCase = ValidatePromptUseCase()
+
     fun onPromptChanged(newPrompt: String) {
         val maxChar = _uiState.value.maxChar
         val limitedPrompt = newPrompt.take(maxChar)
 
         _uiState.value = _uiState.value.copy(
             prompt = limitedPrompt,
-            errorMessage = validatePrompt(limitedPrompt)
+            errorMessage = validatePromptUseCase(limitedPrompt)
         )
     }
 
@@ -49,15 +52,11 @@ class CustomSpeechViewModel(
 
         if (!state.canGenerate) return
 
-        Log.d(
-            "CustomSpeechViewModel",
-            "Create tapped, Prompt Length: ${state.prompt.trim().length}"
-        )
-
         viewModelScope.launch {
             _uiState.value = state.copy(
                 isGenerating = true,
-                isPlaying = false
+                isPlaying = false,
+                errorMessage = null
             )
 
             try {
@@ -67,12 +66,16 @@ class CustomSpeechViewModel(
 
                 _uiState.value = _uiState.value.copy(
                     isGenerating = false,
-                    isPlaying = true
+                    isPlaying = true,
+                    errorMessage = null
                 )
-            } catch (_: Exception) {
+            } catch (exception: Exception) {
+                Log.e("CustomSpeechViewModel", "Speech generation failed", exception)
+
                 _uiState.value = _uiState.value.copy(
                     isGenerating = false,
-                    isPlaying = false
+                    isPlaying = false,
+                    errorMessage = "Could not create speech."
                 )
             }
         }
@@ -89,18 +92,6 @@ class CustomSpeechViewModel(
         _uiState.value = _uiState.value.copy(
             isPlaying = false
         )
-    }
-
-    private fun validatePrompt(prompt: String): String? {
-        val trimmedPrompt = prompt.trim()
-
-        return when {
-            trimmedPrompt.isBlank() -> null
-            trimmedPrompt.length < 2 -> "Enter at least 2 characters."
-            prompt.any { Character.isISOControl(it) && it != '\n' && it != '\t' } ->
-                "Text contains unsupported characters."
-            else -> null
-        }
     }
 }
 

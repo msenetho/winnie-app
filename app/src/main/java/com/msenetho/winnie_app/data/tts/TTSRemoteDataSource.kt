@@ -26,19 +26,17 @@ class TTSRemoteDataSource (
             .post(requestBody)
             .build()
 
-        val response = client.newCall(request).execute()
+        val audioBytes = client.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) {
+                throw IllegalStateException("TTS request failed: ${response.code}")
+            }
 
-        if (!response.isSuccessful) {
-            response.close()
-            throw IllegalStateException("TTS Request failed: ${response.code}")
+            response.body.bytes()
         }
 
-        val audioBytes = response.body.bytes()
-        response.close()
-
-        val outputFile = File(context.cacheDir, "generate_tts.mp3")
+        val outputFile = File(context.cacheDir, "generated_tts.mp3")
         outputFile.writeBytes(audioBytes)
 
-        outputFile
+        return@withContext outputFile
     }
 }

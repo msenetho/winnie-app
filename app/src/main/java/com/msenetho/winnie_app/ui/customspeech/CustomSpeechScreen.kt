@@ -43,7 +43,10 @@ fun CustomSpeechScreen(
             onValueChange = onPromptChanged,
             label = { Text("Enter line") },
             supportingText = {
-                Text("${uiState.maxChar - uiState.remainingChar} /${uiState.maxChar}")
+                Text(
+                    text = uiState.errorMessage
+                        ?: "${uiState.maxChar - uiState.remainingChar} / ${uiState.maxChar}"
+                )
             },
             isError = uiState.errorMessage != null,
             modifier = Modifier.fillMaxWidth(0.80f),

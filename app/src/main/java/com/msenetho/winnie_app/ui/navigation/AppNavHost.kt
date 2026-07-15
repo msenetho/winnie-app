@@ -12,12 +12,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.msenetho.winnie_app.ui.customspeech.CustomSpeechRoute
 import com.msenetho.winnie_app.ui.library.ClipLibraryRoute
 
 enum class AppScreen(val route: String, val label: String) {
     Quotes("quotes", "Quotes"),
-    Tts("tts", "Text-to-Speech")
 }
 
 @Composable
@@ -41,19 +39,6 @@ fun AppNavHost() {
                     label = { Text(AppScreen.Quotes.label) },
                     icon = { Text("Q") } // placeholder for icon image
                 )
-
-                NavigationBarItem(
-                    selected = currentRoute == AppScreen.Tts.route,
-                    onClick = {
-                        if (currentRoute != AppScreen.Tts.route) {
-                            navController.navigate(AppScreen.Tts.route) {
-                                launchSingleTop = true
-                            }
-                        }
-                    },
-                    label = { Text(AppScreen.Tts.label) },
-                    icon = { Text("T") } // placeholder for icon image
-                )
             }
         }
     ) { innerPadding ->
@@ -64,9 +49,6 @@ fun AppNavHost() {
         ) {
             composable(AppScreen.Quotes.route) {
                 ClipLibraryRoute()
-            }
-            composable(AppScreen.Tts.route) {
-                CustomSpeechRoute()
             }
         }
     }

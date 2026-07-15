@@ -19,6 +19,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.msenetho.winnie_app.domain.model.VoiceClip
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
 
 @Composable
 fun ClipLibraryScreen(
@@ -28,7 +31,9 @@ fun ClipLibraryScreen(
     currentlyPlayingAssetPath: String?,
     onClipClicked: (VoiceClip) -> Unit,
     onStopClicked: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    selectedMode: ViewMode,
+    onViewModeChanged: (ViewMode) -> Unit
 ) {
     Column(
         modifier = modifier
@@ -106,6 +111,8 @@ fun ClipLibraryRoute(
         errorMessage = uiState.errorMessage,
         currentlyPlayingAssetPath = uiState.currentlyPlayingAssetPath,
         onClipClicked = viewModel::onClipClicked,
-        onStopClicked = viewModel::onStopClicked
+        onStopClicked = viewModel::onStopClicked,
+        onViewModeChanged = viewModel::onViewModeChanged,
+        selectedMode = uiState.selectedMode
     )
 }

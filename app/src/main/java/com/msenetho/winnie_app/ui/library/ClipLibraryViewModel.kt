@@ -9,6 +9,7 @@ import com.msenetho.winnie_app.domain.model.VoiceClip
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 class ClipLibraryViewModel(
     application: Application
@@ -62,5 +63,11 @@ class ClipLibraryViewModel(
     override fun onCleared() {
         audioPlayer.release()
         super.onCleared()
+    }
+
+    fun onViewModeChanged(mode: ViewMode) {
+        _uiState.update {
+            it.copy(selectedMode = mode)
+        }
     }
 }

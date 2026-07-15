@@ -6,5 +6,7 @@ data class ClipLibraryUIState (
     val clips: List<VoiceClip> = emptyList(),
     val isLoading: Boolean = true,
     val errorMessage: String? = null,
-    val currentlyPlayingAssetPath: String? = null
+    val currentlyPlayingAssetPath: String? = null,
+
+    val selectedMode: ViewMode = ViewMode.LIST
 )

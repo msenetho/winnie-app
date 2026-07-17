@@ -119,9 +119,9 @@ fun ClipLibraryScreen(
                     when (uiState.selectedMode) {
                         ViewMode.LIST -> {
                             LazyColumn(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                horizontalAlignment = Alignment.CenterHorizontally
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                contentPadding = PaddingValues(bottom = 96.dp)
                             ) {
                                 items(uiState.clips) { clip ->
                                     ClipListItem(
@@ -137,7 +137,7 @@ fun ClipLibraryScreen(
                             LazyVerticalGrid(
                                 columns = GridCells.Adaptive(minSize = 160.dp),
                                 modifier = Modifier.fillMaxSize(),
-                                contentPadding = PaddingValues(8.dp),
+                                contentPadding = PaddingValues(bottom = 96.dp),
                                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                                 verticalArrangement = Arrangement.spacedBy(12.dp)
                             ) {

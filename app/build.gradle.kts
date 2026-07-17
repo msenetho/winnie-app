@@ -6,7 +6,7 @@ plugins {
 android {
     namespace = "com.msenetho.winnie_app"
     compileSdk {
-        version = release(36) {
+        version = release(37) {
             minorApiLevel = 1
         }
     }
@@ -14,7 +14,7 @@ android {
     defaultConfig {
         applicationId = "com.msenetho.winnie_app"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 1
         versionName = "1.0"
 
@@ -38,6 +38,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.material.icons.extended)
     implementation("androidx.navigation:navigation-compose:2.9.8")
     implementation("androidx.media3:media3-exoplayer:1.10.1")
     implementation("com.squareup.okhttp3:okhttp:5.4.0")

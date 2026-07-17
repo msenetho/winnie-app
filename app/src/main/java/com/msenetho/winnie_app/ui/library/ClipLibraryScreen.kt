@@ -4,20 +4,26 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.GraphicEq
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.CropSquare
+import androidx.compose.material.icons.filled.GridView
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
@@ -29,6 +35,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.msenetho.winnie_app.domain.model.VoiceClip
@@ -64,7 +72,7 @@ fun ClipLibraryScreen(
         SingleChoiceSegmentedButtonRow(
             modifier = Modifier
                 .align(Alignment.End)
-                //.height(24.dp) // current height clips text
+                .height(40.dp)
         ) {
             SegmentedButton(
                 selected = selectedMode == ViewMode.LIST,
@@ -74,8 +82,11 @@ fun ClipLibraryScreen(
                     count = 2
                 )
             ) {
-                // placeholder for icon
-                Text("List")
+                // list icon
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.List,
+                    contentDescription = "List view"
+                )
             }
 
             SegmentedButton(
@@ -86,8 +97,11 @@ fun ClipLibraryScreen(
                     count = 2
                 )
             ) {
-                // placeholder for icon
-                Text("Grid")
+                // grid icon
+                Icon(
+                    imageVector = Icons.Filled.GridView,
+                    contentDescription = "Grid view"
+                )
             }
         }
 
@@ -103,47 +117,59 @@ fun ClipLibraryScreen(
             }
 
             else -> {
-                when (selectedMode) {
-                    ViewMode.LIST ->
-                        LazyColumn(
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxWidth(),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            items(clips) {clip ->
-                                ClipListItem(
-                                    clip = clip,
-                                    isPlaying = clip.assetPath == currentlyPlayingAssetPath,
-                                    onClipClicked = onClipClicked,
-                                )
-                            }
-                        }
-
-                    ViewMode.GRID ->
-                        LazyVerticalGrid(
-                            columns = GridCells.Adaptive(minSize = 180.dp),
-                            modifier = Modifier.fillMaxWidth(),
-                            contentPadding = PaddingValues(8.dp),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            items(clips) { clip ->
-                                ClipListItem(
-                                    clip = clip,
-                                    isPlaying = clip.assetPath == currentlyPlayingAssetPath,
-                                    onClipClicked = onClipClicked,
-                                )
-                            }
-                        }
-                }
-
-                Button(
-                    onClick = onStopClicked,
-                    enabled = currentlyPlayingAssetPath != null,
-                    modifier = modifier.fillMaxWidth()
+                Box(
+                    modifier = Modifier.fillMaxSize()
                 ) {
-                    Text("Stop")
+                    when (selectedMode) {
+                        ViewMode.LIST -> {
+                            LazyColumn(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                items(clips) { clip ->
+                                    ClipListItem(
+                                        clip = clip,
+                                        isPlaying = clip.assetPath == currentlyPlayingAssetPath,
+                                        onClipClicked = onClipClicked,
+                                    )
+                                }
+                            }
+                        }
+
+                        ViewMode.GRID -> {
+                            LazyVerticalGrid(
+                                columns = GridCells.Adaptive(minSize = 160.dp),
+                                modifier = Modifier.fillMaxSize(),
+                                contentPadding = PaddingValues(8.dp),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                verticalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                items(clips) { clip ->
+                                    ClipListItem(
+                                        clip = clip,
+                                        isPlaying = clip.assetPath == currentlyPlayingAssetPath,
+                                        onClipClicked = onClipClicked,
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    // button for stopping audio
+                    if (currentlyPlayingAssetPath != null) {
+                        FloatingActionButton(
+                            onClick = onStopClicked,
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .padding(16.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.CropSquare,
+                                contentDescription = "Stop playback"
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -181,25 +207,37 @@ fun ClipListItem(
     ) {
         Button(
             onClick = { onClipClicked(clip) },
-            modifier = Modifier.fillMaxWidth(0.70f)
+            modifier = Modifier.fillMaxWidth(0.80f)
         ) {
-            Box(
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                // title centered
-                Text(clip.title)
-
-                // icon to the left
-                if (isPlaying) {
-                    Icon(
-                        imageVector = Icons.Filled.GraphicEq,
-                        contentDescription = "Playing...",
-                        modifier = Modifier
-                            .align(Alignment.CenterStart)
-                            .size(18.dp)
-                    )
+                Box(
+                    modifier = Modifier.size(24.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    // icon to the left
+                    if (isPlaying) {
+                        Icon(
+                            imageVector = Icons.Filled.PlayArrow,
+                            contentDescription = "Playing...",
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
                 }
+
+                // title centered
+                Text(
+                    text = clip.title,
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.Center,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                // spacer to keep centered
+                Spacer(modifier = Modifier.width(24.dp))
             }
         }
     }

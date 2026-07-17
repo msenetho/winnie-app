@@ -43,13 +43,9 @@ import com.msenetho.winnie_app.domain.model.VoiceClip
 
 @Composable
 fun ClipLibraryScreen(
-    clips: List<VoiceClip>,
-    isLoading: Boolean,
-    errorMessage: String?,
-    currentlyPlayingAssetPath: String?,
+    uiState: ClipLibraryUIState,
     onClipClicked: (VoiceClip) -> Unit,
     onStopClicked: () -> Unit,
-    selectedMode: ViewMode,
     onViewModeChanged: (ViewMode) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -75,7 +71,7 @@ fun ClipLibraryScreen(
                 .height(40.dp)
         ) {
             SegmentedButton(
-                selected = selectedMode == ViewMode.LIST,
+                selected = uiState.selectedMode == ViewMode.LIST,
                 onClick = { onViewModeChanged(ViewMode.LIST) },
                 shape = SegmentedButtonDefaults.itemShape(
                     index = 0,
@@ -90,7 +86,7 @@ fun ClipLibraryScreen(
             }
 
             SegmentedButton(
-                selected = selectedMode == ViewMode.GRID,
+                selected = uiState.selectedMode == ViewMode.GRID,
                 onClick = { onViewModeChanged(ViewMode.GRID) },
                 shape = SegmentedButtonDefaults.itemShape(
                     index = 1,
@@ -108,29 +104,29 @@ fun ClipLibraryScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         when {
-            isLoading -> {
+            uiState.isLoading -> {
                 Text("Loading lines...")
             }
 
-            errorMessage != null -> {
-                Text(errorMessage)
+            uiState.errorMessage != null -> {
+                Text(uiState.errorMessage)
             }
 
             else -> {
                 Box(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    when (selectedMode) {
+                    when (uiState.selectedMode) {
                         ViewMode.LIST -> {
                             LazyColumn(
                                 modifier = Modifier
                                     .fillMaxWidth(),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                items(clips) { clip ->
+                                items(uiState.clips) { clip ->
                                     ClipListItem(
                                         clip = clip,
-                                        isPlaying = clip.assetPath == currentlyPlayingAssetPath,
+                                        isPlaying = clip.assetPath == uiState.currentlyPlayingAssetPath,
                                         onClipClicked = onClipClicked,
                                     )
                                 }
@@ -145,10 +141,10 @@ fun ClipLibraryScreen(
                                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                                 verticalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
-                                items(clips) { clip ->
+                                items(uiState.clips) { clip ->
                                     ClipListItem(
                                         clip = clip,
-                                        isPlaying = clip.assetPath == currentlyPlayingAssetPath,
+                                        isPlaying = clip.assetPath == uiState.currentlyPlayingAssetPath,
                                         onClipClicked = onClipClicked,
                                     )
                                 }
@@ -157,7 +153,7 @@ fun ClipLibraryScreen(
                     }
 
                     // button for stopping audio
-                    if (currentlyPlayingAssetPath != null) {
+                    if (uiState.currentlyPlayingAssetPath != null) {
                         FloatingActionButton(
                             onClick = onStopClicked,
                             modifier = Modifier
@@ -183,14 +179,10 @@ fun ClipLibraryRoute(
     val uiState by viewModel.uiState.collectAsState()
 
     ClipLibraryScreen(
-        clips = uiState.clips,
-        isLoading = uiState.isLoading,
-        errorMessage = uiState.errorMessage,
-        currentlyPlayingAssetPath = uiState.currentlyPlayingAssetPath,
+        uiState = uiState,
         onClipClicked = viewModel::onClipClicked,
         onStopClicked = viewModel::onStopClicked,
-        onViewModeChanged = viewModel::onViewModeChanged,
-        selectedMode = uiState.selectedMode
+        onViewModeChanged = viewModel::onViewModeChanged
     )
 }
 
@@ -214,7 +206,7 @@ fun ClipListItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
-                    modifier = Modifier.size(24.dp),
+                    modifier = Modifier.size(20.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     // icon to the left
@@ -226,6 +218,8 @@ fun ClipListItem(
                         )
                     }
                 }
+
+                Spacer(modifier = Modifier.width(4.dp))
 
                 // title centered
                 Text(

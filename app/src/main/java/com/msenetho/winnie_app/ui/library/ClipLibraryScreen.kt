@@ -1,11 +1,13 @@
 package com.msenetho.winnie_app.ui.library
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,12 +19,14 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.CropSquare
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -135,11 +139,16 @@ fun ClipLibraryScreen(
 
                         ViewMode.GRID -> {
                             LazyVerticalGrid(
-                                columns = GridCells.Adaptive(minSize = 160.dp),
+                                columns = GridCells.Fixed(2),
                                 modifier = Modifier.fillMaxSize(),
-                                contentPadding = PaddingValues(bottom = 96.dp),
-                                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                                verticalArrangement = Arrangement.spacedBy(12.dp)
+                                contentPadding = PaddingValues(
+                                    start = 16.dp,
+                                    top = 16.dp,
+                                    end = 16.dp,
+                                    bottom = 96.dp
+                                ),
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                verticalArrangement = Arrangement.spacedBy(16.dp)
                             ) {
                                 items(uiState.clips) { clip ->
                                     ClipGridItem(
@@ -243,48 +252,40 @@ fun ClipGridItem (
     clip: VoiceClip,
     isPlaying: Boolean,
     onClipClicked: (VoiceClip) -> Unit,
-    modifier: Modifier = Modifier
 ) {
-    Box(
-        modifier = modifier.fillMaxWidth(),
-        contentAlignment = Alignment.Center
+    Card(
+        onClick = { onClipClicked(clip) },
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(150.dp),
+        shape = RoundedCornerShape(16.dp)
     ) {
-        Button(
-            onClick = { onClipClicked(clip) },
-            modifier = Modifier.fillMaxWidth(0.80f)
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier.size(20.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    // icon to the left
-                    if (isPlaying) {
-                        Icon(
-                            imageVector = Icons.Filled.PlayArrow,
-                            contentDescription = "Playing...",
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.width(4.dp))
-
-                // title centered
-                Text(
-                    text = clip.title,
-                    modifier = Modifier.weight(1f),
-                    textAlign = TextAlign.Center,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+            // play icon
+            if (isPlaying) {
+                Icon(
+                    imageVector = Icons.Filled.PlayArrow,
+                    contentDescription = "Playing",
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(10.dp)
+                        .size(18.dp)
                 )
-
-                // spacer to keep centered
-                Spacer(modifier = Modifier.width(24.dp))
             }
+
+            // title
+            Text(
+                text = clip.title,
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(horizontal = 12.dp), // change if needed
+                textAlign = TextAlign.Center,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis
+            )
         }
     }
 }

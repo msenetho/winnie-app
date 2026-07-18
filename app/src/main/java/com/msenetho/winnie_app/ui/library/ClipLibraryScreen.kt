@@ -142,7 +142,7 @@ fun ClipLibraryScreen(
                                 verticalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
                                 items(uiState.clips) { clip ->
-                                    ClipListItem(
+                                    ClipGridItem(
                                         clip = clip,
                                         isPlaying = clip.assetPath == uiState.currentlyPlayingAssetPath,
                                         onClipClicked = onClipClicked,
@@ -188,6 +188,58 @@ fun ClipLibraryRoute(
 
 @Composable
 fun ClipListItem(
+    clip: VoiceClip,
+    isPlaying: Boolean,
+    onClipClicked: (VoiceClip) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier.fillMaxWidth(),
+        contentAlignment = Alignment.Center
+    ) {
+        Button(
+            onClick = { onClipClicked(clip) },
+            modifier = Modifier.fillMaxWidth(0.70f)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier.size(20.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    // icon to the left
+                    if (isPlaying) {
+                        Icon(
+                            imageVector = Icons.Filled.PlayArrow,
+                            contentDescription = "Playing...",
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.width(4.dp))
+
+                // title centered
+                Text(
+                    text = clip.title,
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.Center,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                // spacer to keep centered
+                Spacer(modifier = Modifier.width(24.dp))
+            }
+        }
+    }
+    Spacer(modifier = Modifier.height(4.dp))
+}
+
+@Composable
+fun ClipGridItem (
     clip: VoiceClip,
     isPlaying: Boolean,
     onClipClicked: (VoiceClip) -> Unit,

@@ -128,7 +128,7 @@ fun ClipLibraryScreen(
                                 items(uiState.clips) { clip ->
                                     ClipListItem(
                                         clip = clip,
-                                        isPlaying = clip.assetPath == uiState.currentlyPlayingAssetPath,
+                                        isPlaying = clip.id == uiState.currentlyPlayingClipId,
                                         onClipClicked = onClipClicked,
                                     )
                                 }
@@ -151,7 +151,7 @@ fun ClipLibraryScreen(
                                 items(uiState.clips) { clip ->
                                     ClipGridItem(
                                         clip = clip,
-                                        isPlaying = clip.assetPath == uiState.currentlyPlayingAssetPath,
+                                        isPlaying = clip.id == uiState.currentlyPlayingClipId,
                                         onClipClicked = onClipClicked,
                                     )
                                 }
@@ -160,7 +160,7 @@ fun ClipLibraryScreen(
                     }
 
                     // button for stopping audio
-                    if (uiState.currentlyPlayingAssetPath != null) {
+                    if (uiState.currentlyPlayingClipId != null) {
                         FloatingActionButton(
                             onClick = onStopClicked,
                             modifier = Modifier
@@ -206,7 +206,7 @@ fun ClipListItem(
     ) {
         Button(
             onClick = { onClipClicked(clip) },
-            modifier = Modifier.fillMaxWidth(0.70f)
+            modifier = Modifier.fillMaxWidth(0.90f)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),

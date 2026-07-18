@@ -18,7 +18,7 @@ class ClipLibraryViewModel(
     private val audioPlayer: AudioPlayer = MediaAudioPlayer(application).apply {
         onPlaybackEnded = {
             _uiState.value = _uiState.value.copy(
-                currentlyPlayingAssetPath = null
+                currentlyPlayingClipId = null
             )
         }
     }
@@ -48,7 +48,7 @@ class ClipLibraryViewModel(
         audioPlayer.playAsset(clip.assetPath)
 
         _uiState.value = _uiState.value.copy(
-            currentlyPlayingAssetPath = clip.assetPath
+            currentlyPlayingClipId = clip.id
         )
     }
 
@@ -56,13 +56,12 @@ class ClipLibraryViewModel(
         audioPlayer.stop()
 
         _uiState.value = _uiState.value.copy(
-            currentlyPlayingAssetPath = null
+            currentlyPlayingClipId = null
         )
     }
 
     override fun onCleared() {
         audioPlayer.release()
-        super.onCleared()
     }
 
     fun onViewModeChanged(mode: ViewMode) {

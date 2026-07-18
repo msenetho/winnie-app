@@ -22,7 +22,8 @@ class AssetClipDataSource (
             clips.add(
                 VoiceClip(
                     title = item.getString("title"),
-                    assetPath = item.getString("assetPath")
+                    assetPath = item.getString("assetPath"),
+                    id = item.getInt("id")
                 )
             )
         }

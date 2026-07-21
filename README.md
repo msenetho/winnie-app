@@ -1,4 +1,4 @@
-# 🧸 Winnie the Pooh Quote Library
+# Winnie the Pooh Quote Library
 
 ![Android](https://img.shields.io/badge/Android-API%2036+-3DDC84?style=for-the-badge&logo=android&logoColor=white)
 ![Kotlin](https://img.shields.io/badge/Kotlin-2.2-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)
@@ -14,25 +14,25 @@ An Android application for browsing and playing a curated collection of Winnie t
 
 ## Features
 
-### 🎵 Quote Library
+### Quote Library
 
 - Browse a collection of Winnie the Pooh quotes
 - Play audio clips instantly
 - Clean Material 3 interface
 
-### ❤️ Favorites
+### Favorites
 
 - Mark clips as favorites
 - Persistent storage using Preferences DataStore
 - Favorites remain after closing the app
 
-### 📱 Multiple Layouts
+### Multiple Layouts
 
 - List View
 - Grid View
 - Easily switch between layouts
 
-### 🔊 Audio Playback
+### Audio Playback
 
 - Powered by AndroidX Media3 (ExoPlayer)
 - Plays locally stored audio assets

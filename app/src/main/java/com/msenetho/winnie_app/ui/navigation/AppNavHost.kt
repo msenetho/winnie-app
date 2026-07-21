@@ -27,6 +27,7 @@ fun AppNavHost() {
     Scaffold(
         bottomBar = {
             NavigationBar {
+                // quotes page
                 NavigationBarItem(
                     selected = currentRoute == AppScreen.Quotes.route,
                     onClick = {

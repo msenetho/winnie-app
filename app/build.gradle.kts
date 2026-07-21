@@ -39,9 +39,10 @@ android {
 
 dependencies {
     implementation(libs.androidx.material.icons.extended)
-    implementation("androidx.navigation:navigation-compose:2.9.8")
-    implementation("androidx.media3:media3-exoplayer:1.10.1")
-    implementation("com.squareup.okhttp3:okhttp:5.4.0")
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.squareup.okhttp)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)

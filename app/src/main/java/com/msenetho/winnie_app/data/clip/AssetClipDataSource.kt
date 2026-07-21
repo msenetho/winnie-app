@@ -18,7 +18,6 @@ class AssetClipDataSource (
 
         for (index in 0 until jsonArray.length()) {
             val item = jsonArray.getJSONObject(index)
-
             clips.add(
                 VoiceClip(
                     title = item.getString("title"),
@@ -27,7 +26,6 @@ class AssetClipDataSource (
                 )
             )
         }
-
         return clips
     }
 }

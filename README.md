@@ -1,3 +1,5 @@
+<div align="center">
+
 # Winnie the Pooh Quote Library
 
 ![Android](https://img.shields.io/badge/Android-API%2036+-3DDC84?style=for-the-badge&logo=android&logoColor=white)
@@ -7,6 +9,8 @@
 ![Media3](https://img.shields.io/badge/AndroidX%20Media3-34A853?style=for-the-badge)
 
 An Android application for browsing and playing a curated collection of Winnie the Pooh voice clips. Built using modern Android development practices including Jetpack Compose, AndroidX Media3, DataStore, and an MVVM-inspired architecture.
+
+</div>
 
 > **Note:** This project was created for educational and portfolio purposes and is not affiliated with Disney.
 

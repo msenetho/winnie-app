@@ -12,11 +12,11 @@ class ClipUiModel {
     private val _currentPlayingClipId = MutableStateFlow<Int?>(null)
     private val _selectedMode = MutableStateFlow(ViewMode.LIST)
 
-    private val clipUiModels = combine(
-        _clips,
-        favouritesRepository.favouriteIds,
-        _currentPlayingClipId
-    ) { clips, favouriteIds, currentlyPlayingClipId ->
-
-    }
+//    private val clipUiModels = combine(
+//        _clips,
+//        favouritesRepository.favouriteIds,
+//        _currentPlayingClipId
+//    ) { clips, favouriteIds, currentlyPlayingClipId ->
+//
+//    }
 }

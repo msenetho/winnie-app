@@ -128,8 +128,7 @@ fun ClipLibraryScreen(
                                 items(uiState.clips) { clip ->
                                     ClipListItem(
                                         clip = clip,
-                                        isPlaying = clip.id == uiState.currentlyPlayingClipId,
-                                        onClipClicked = onClipClicked,
+                                        onClipClicked = onClipClicked
                                     )
                                 }
                             }
@@ -151,8 +150,7 @@ fun ClipLibraryScreen(
                                 items(uiState.clips) { clip ->
                                     ClipGridItem(
                                         clip = clip,
-                                        isPlaying = clip.id == uiState.currentlyPlayingClipId,
-                                        onClipClicked = onClipClicked,
+                                        onClipClicked = onClipClicked
                                     )
                                 }
                             }
@@ -160,7 +158,7 @@ fun ClipLibraryScreen(
                     }
 
                     // button for stopping audio
-                    if (uiState.currentlyPlayingClipId != null) {
+                    if (uiState.clips.any { it.isPlaying }) {
                         FloatingActionButton(
                             onClick = onStopClicked,
                             modifier = Modifier
@@ -195,8 +193,7 @@ fun ClipLibraryRoute(
 
 @Composable
 fun ClipListItem(
-    clip: VoiceClip,
-    isPlaying: Boolean,
+    clip: ClipUiModel,
     onClipClicked: (VoiceClip) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -205,7 +202,7 @@ fun ClipListItem(
         contentAlignment = Alignment.Center
     ) {
         Button(
-            onClick = { onClipClicked(clip) },
+            onClick = { onClipClicked(clip.clip) },
             modifier = Modifier.fillMaxWidth(0.90f)
         ) {
             Row(
@@ -217,7 +214,7 @@ fun ClipListItem(
                     contentAlignment = Alignment.Center
                 ) {
                     // icon to the left
-                    if (isPlaying) {
+                    if (clip.isPlaying) {
                         Icon(
                             imageVector = Icons.Filled.PlayArrow,
                             contentDescription = "Playing...",
@@ -230,7 +227,7 @@ fun ClipListItem(
 
                 // title centered
                 Text(
-                    text = clip.title,
+                    text = clip.clip.title,
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center,
                     maxLines = 2,
@@ -247,12 +244,11 @@ fun ClipListItem(
 
 @Composable
 fun ClipGridItem (
-    clip: VoiceClip,
-    isPlaying: Boolean,
+    clip: ClipUiModel,
     onClipClicked: (VoiceClip) -> Unit,
 ) {
     Card(
-        onClick = { onClipClicked(clip) },
+        onClick = { onClipClicked(clip.clip) },
         modifier = Modifier
             .fillMaxWidth()
             .height(150.dp),
@@ -263,7 +259,7 @@ fun ClipGridItem (
                 .fillMaxSize()
         ) {
             // play icon
-            if (isPlaying) {
+            if (clip.isPlaying) {
                 Icon(
                     imageVector = Icons.Filled.PlayArrow,
                     contentDescription = "Playing",
@@ -276,7 +272,7 @@ fun ClipGridItem (
 
             // title
             Text(
-                text = clip.title,
+                text = clip.clip.title,
                 modifier = Modifier
                     .align(Alignment.Center)
                     .padding(horizontal = 12.dp), // change if needed

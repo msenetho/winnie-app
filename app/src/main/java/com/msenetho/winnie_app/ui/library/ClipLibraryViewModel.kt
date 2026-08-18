@@ -5,59 +5,86 @@ import androidx.lifecycle.AndroidViewModel
 import com.msenetho.winnie_app.core.audio.AudioPlayer
 import com.msenetho.winnie_app.core.audio.MediaAudioPlayer
 import com.msenetho.winnie_app.data.clip.AssetClipDataSource
+import com.msenetho.winnie_app.data.favourites.FavouritesRepository
 import com.msenetho.winnie_app.domain.model.VoiceClip
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.combine
 
 class ClipLibraryViewModel(
-    application: Application
+    application: Application, private val favouritesRepository: FavouritesRepository
 ) : AndroidViewModel(application) {
+
+    private val _clips = MutableStateFlow<List<VoiceClip>>(emptyList())
+    private val _isLoading = MutableStateFlow(true)
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    private val _currentlyPlayingClipId = MutableStateFlow<Int?>(null)
+    private val _selectedMode = MutableStateFlow(ViewMode.LIST)
+
     private val _uiState = MutableStateFlow(ClipLibraryUIState())
+    val uiState: StateFlow<ClipLibraryUIState> = _uiState.asStateFlow()
     private val audioPlayer: AudioPlayer = MediaAudioPlayer(application).apply {
         onPlaybackEnded = {
-            _uiState.value = _uiState.value.copy(
-                currentlyPlayingClipId = null
-            )
+            _currentlyPlayingClipId.value = null
         }
     }
-    val uiState: StateFlow<ClipLibraryUIState> = _uiState.asStateFlow()
 
     init {
         loadClips()
     }
 
+    // combine #1
+    private val clipUiModels: Flow<List<ClipUiModel>> = combine(
+        _clips,
+        favouritesRepository.favouriteIds,
+        _currentlyPlayingClipId
+    ) { clips, favouriteIds, currentlyPlayingClipId ->
+        clips.map { clip ->
+            ClipUiModel(
+                clip = clip,
+                isFavourite = clip.id in favouriteIds,
+                isPlaying = (clip.id == currentlyPlayingClipId)
+            )
+        }
+    }
+
+    // combine #2
+    private val combinedUiState: Flow<ClipLibraryUIState> = combine(
+        clipUiModels,
+        _isLoading,
+        _errorMessage,
+        _selectedMode
+    ) { clips, isLoading, errorMessage, selectedMode ->
+        ClipLibraryUIState(
+            clips = clips,
+            isLoading = isLoading,
+            errorMessage = errorMessage,
+            selectedMode = selectedMode
+        )
+    }
+
     private fun loadClips() {
         try {
             val clips = AssetClipDataSource(getApplication()).loadVoiceClips()
+            _clips.value = clips
+            _isLoading.value = false
 
-            _uiState.value = ClipLibraryUIState(
-                clips = clips,
-                isLoading = false
-            )
         } catch (_: Exception) {
-            _uiState.value = ClipLibraryUIState(
-                isLoading = false,
-                errorMessage = "Could not load voice clips"
-            )
+            _isLoading.value = false
+            _errorMessage.value = "Could not load voice clips"
         }
     }
 
     fun onClipClicked(clip: VoiceClip) {
         audioPlayer.playAsset(clip.assetPath)
-
-        _uiState.value = _uiState.value.copy(
-            currentlyPlayingClipId = clip.id
-        )
+        _currentlyPlayingClipId.value = clip.id
     }
 
     fun onStopClicked() {
         audioPlayer.stop()
-
-        _uiState.value = _uiState.value.copy(
-            currentlyPlayingClipId = null
-        )
+        _currentlyPlayingClipId.value = null
     }
 
     override fun onCleared() {
@@ -65,8 +92,6 @@ class ClipLibraryViewModel(
     }
 
     fun onViewModeChanged(mode: ViewMode) {
-        _uiState.update {
-            it.copy(selectedMode = mode)
-        }
+        _selectedMode.value = mode
     }
 }

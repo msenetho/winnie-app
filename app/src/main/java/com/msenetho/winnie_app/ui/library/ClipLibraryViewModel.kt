@@ -2,9 +2,14 @@ package com.msenetho.winnie_app.ui.library
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.msenetho.winnie_app.core.audio.AudioPlayer
 import com.msenetho.winnie_app.core.audio.MediaAudioPlayer
 import com.msenetho.winnie_app.data.clip.AssetClipDataSource
+import com.msenetho.winnie_app.data.favourites.FavouritesLocalDataSource
 import com.msenetho.winnie_app.data.favourites.FavouritesRepository
 import com.msenetho.winnie_app.domain.model.VoiceClip
 import kotlinx.coroutines.flow.Flow
@@ -12,6 +17,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 
 class ClipLibraryViewModel(
     application: Application, private val favouritesRepository: FavouritesRepository
@@ -29,10 +35,6 @@ class ClipLibraryViewModel(
         onPlaybackEnded = {
             _currentlyPlayingClipId.value = null
         }
-    }
-
-    init {
-        loadClips()
     }
 
     // combine #1
@@ -65,6 +67,15 @@ class ClipLibraryViewModel(
         )
     }
 
+    init {
+        viewModelScope.launch {
+            combinedUiState.collect{ state ->
+                _uiState.value = state
+            }
+        }
+        loadClips()
+    }
+
     private fun loadClips() {
         try {
             val clips = AssetClipDataSource(getApplication()).loadVoiceClips()
@@ -93,5 +104,25 @@ class ClipLibraryViewModel(
 
     fun onViewModeChanged(mode: ViewMode) {
         _selectedMode.value = mode
+    }
+
+    companion object {
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val application = checkNotNull(
+                    this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
+
+                val favouritesLocalDataSource =
+                    FavouritesLocalDataSource(application)
+
+                val favouritesRepository =
+                    FavouritesRepository(favouritesLocalDataSource)
+
+                ClipLibraryViewModel(
+                    application = application,
+                    favouritesRepository = favouritesRepository
+                )
+            }
+        }
     }
 }

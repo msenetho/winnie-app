@@ -179,7 +179,7 @@ fun ClipLibraryScreen(
 
 @Composable
 fun ClipLibraryRoute(
-    viewModel: ClipLibraryViewModel = viewModel()
+    viewModel: ClipLibraryViewModel = viewModel(factory = ClipLibraryViewModel.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
 

@@ -28,7 +28,6 @@ class ClipLibraryViewModel(
     private val _errorMessage = MutableStateFlow<String?>(null)
     private val _currentlyPlayingClipId = MutableStateFlow<Int?>(null)
     private val _selectedMode = MutableStateFlow(ViewMode.LIST)
-
     private val _uiState = MutableStateFlow(ClipLibraryUIState())
     val uiState: StateFlow<ClipLibraryUIState> = _uiState.asStateFlow()
     private val audioPlayer: AudioPlayer = MediaAudioPlayer(application).apply {
@@ -112,11 +111,8 @@ class ClipLibraryViewModel(
                 val application = checkNotNull(
                     this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
 
-                val favouritesLocalDataSource =
-                    FavouritesLocalDataSource(application)
-
                 val favouritesRepository =
-                    FavouritesRepository(favouritesLocalDataSource)
+                    FavouritesRepository(FavouritesLocalDataSource(application))
 
                 ClipLibraryViewModel(
                     application = application,

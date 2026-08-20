@@ -24,11 +24,14 @@ import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.CropSquare
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -51,6 +54,7 @@ fun ClipLibraryScreen(
     onClipClicked: (VoiceClip) -> Unit,
     onStopClicked: () -> Unit,
     onViewModeChanged: (ViewMode) -> Unit,
+    onFavouriteClicked: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -144,7 +148,8 @@ fun ClipLibraryScreen(
                                 items(uiState.clips) { clip ->
                                     ClipListItem(
                                         clip = clip,
-                                        onClipClicked = onClipClicked
+                                        onClipClicked = onClipClicked,
+                                        onFavouriteClicked = onFavouriteClicked
                                     )
                                 }
                             }
@@ -166,7 +171,8 @@ fun ClipLibraryScreen(
                                 items(uiState.clips) { clip ->
                                     ClipGridItem(
                                         clip = clip,
-                                        onClipClicked = onClipClicked
+                                        onClipClicked = onClipClicked,
+                                        onFavouriteClicked = onFavouriteClicked
                                     )
                                 }
                             }
@@ -203,7 +209,8 @@ fun ClipLibraryRoute(
         uiState = uiState,
         onClipClicked = viewModel::onClipClicked,
         onStopClicked = viewModel::onStopClicked,
-        onViewModeChanged = viewModel::onViewModeChanged
+        onViewModeChanged = viewModel::onViewModeChanged,
+        onFavouriteClicked = viewModel::onFavouriteClicked
     )
 }
 
@@ -211,6 +218,7 @@ fun ClipLibraryRoute(
 fun ClipListItem(
     clip: ClipUiModel,
     onClipClicked: (VoiceClip) -> Unit,
+    onFavouriteClicked: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -254,6 +262,19 @@ fun ClipListItem(
                 Spacer(modifier = Modifier.width(24.dp))
             }
         }
+
+        // favourite icon/button
+        IconButton(
+            onClick = { onFavouriteClicked(clip.clip.id) },
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .padding(end = 20.dp)
+        ) {
+            Icon(
+                imageVector = if (clip.isFavourite) Icons.Filled.Star else Icons.Filled.StarBorder,
+                contentDescription = if (clip.isFavourite) "Remove from favourites" else "Add to favourites"
+            )
+        }
     }
     Spacer(modifier = Modifier.height(4.dp))
 }
@@ -262,42 +283,58 @@ fun ClipListItem(
 fun ClipGridItem (
     clip: ClipUiModel,
     onClipClicked: (VoiceClip) -> Unit,
+    onFavouriteClicked: (Int) -> Unit,
 ) {
-    Card(
-        onClick = { onClipClicked(clip.clip) },
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(150.dp),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        )
-    ) {
-        Box(
+    Box {
+        Card(
+            onClick = { onClipClicked(clip.clip) },
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
+                .height(150.dp),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            )
         ) {
-            // play icon
-            if (clip.isPlaying) {
-                Icon(
-                    imageVector = Icons.Filled.PlayArrow,
-                    contentDescription = "Playing",
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                // play icon
+                if (clip.isPlaying) {
+                    Icon(
+                        imageVector = Icons.Filled.PlayArrow,
+                        contentDescription = "Playing",
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .padding(10.dp)
+                            .size(18.dp)
+                    )
+                }
+
+                // title
+                Text(
+                    text = clip.clip.title,
                     modifier = Modifier
-                        .align(Alignment.TopStart)
-                        .padding(10.dp)
-                        .size(18.dp)
+                        .align(Alignment.Center)
+                        .padding(horizontal = 12.dp), // change if needed
+                    textAlign = TextAlign.Center,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.labelLarge
                 )
             }
+        }
 
-            // title
-            Text(
-                text = clip.clip.title,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(horizontal = 12.dp), // change if needed
-                textAlign = TextAlign.Center,
-                maxLines = 3,
-                overflow = TextOverflow.Ellipsis
+        // favourite icon/button
+        IconButton(
+            onClick = { onFavouriteClicked(clip.clip.id) },
+            modifier = Modifier.align(Alignment.TopEnd)
+        ) {
+            Icon(
+                imageVector = if (clip.isFavourite) Icons.Filled.Star else Icons.Filled.StarBorder,
+                contentDescription = if (clip.isFavourite) "Remove from favourites" else "Add to favourites"
             )
         }
     }

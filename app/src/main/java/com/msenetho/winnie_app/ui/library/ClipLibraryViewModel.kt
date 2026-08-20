@@ -105,6 +105,12 @@ class ClipLibraryViewModel(
         _selectedMode.value = mode
     }
 
+    fun onFavouriteClicked(id: Int) {
+        viewModelScope.launch {
+            favouritesRepository.toggle(id)
+        }
+    }
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {

@@ -1,183 +1,134 @@
 <div align="center">
 
-# Winnie the Pooh Quote Library
+# Winnie Quotes
 
-![Android](https://img.shields.io/badge/Android-API%2036+-3DDC84?style=for-the-badge&logo=android&logoColor=white)
-![Kotlin](https://img.shields.io/badge/Kotlin-2.2-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)
+A small Android app for browsing, playing, and favouriting Winnie the Pooh voice clips.
+
+![Android](https://img.shields.io/badge/Android-minSdk%2024-3DDC84?style=for-the-badge&logo=android&logoColor=white)
+![Kotlin](https://img.shields.io/badge/Kotlin-2.4-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)
 ![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white)
 ![Material 3](https://img.shields.io/badge/Material%203-6750A4?style=for-the-badge)
 ![Media3](https://img.shields.io/badge/AndroidX%20Media3-34A853?style=for-the-badge)
 
-An Android application for browsing and playing a curated collection of Winnie the Pooh voice clips. Built using modern Android development practices including Jetpack Compose, AndroidX Media3, DataStore, and an MVVM-inspired architecture.
-
 </div>
 
-> **Note:** This project was created for educational and portfolio purposes and is not affiliated with Disney.
+> **Disclaimer:** This is a personal learning project and is not affiliated with Disney. Winnie the Pooh and the audio clips belong to their respective copyright holders.
 
 ---
 
-## Features
+## About
 
-### Quote Library
+Winnie Quotes is an Android app that provides a library of short Winnie the Pooh voice clips. Users can tap a clip to play it and star clips to keep them as favourites.
 
-- Browse a collection of Winnie the Pooh quotes
-- Play audio clips instantly
-- Clean Material 3 interface
+The app is built on the modern Android stack: Jetpack Compose for the UI, Kotlin Flows for state management, AndroidX Media3 for audio playback, and Preferences DataStore for local persistence. The scope is intentionally small, which keeps the codebase easy to follow and extend.
 
-### Favorites
+## What it does today
 
-- Mark clips as favorites
-- Persistent storage using Preferences DataStore
-- Favorites remain after closing the app
+- **Clip library.** Loads a list of clips from a bundled JSON file and shows them with a title for each.
+- **Playback.** Tap a clip to play it, and stop it with the stop button. The clip that is playing is highlighted, and the highlight clears when the clip ends.
+- **Favourites.** Star a clip to favourite it. Favourites are saved with Preferences DataStore, so they persist between launches.
+- **List and grid layouts.** Switch between them with a segmented button at the top of the screen.
+- **Loading and error states.** The screen shows a loading state while clips load and an error message if loading fails.
+- **Pooh-themed Material 3 styling.** The palette uses honey gold, Pooh red, Hundred Acre Wood green, and warm parchment.
 
-### Multiple Layouts
+## Architecture
 
-- List View
-- Grid View
-- Easily switch between layouts
-
-### Audio Playback
-
-- Powered by AndroidX Media3 (ExoPlayer)
-- Plays locally stored audio assets
-- Handles playback state and switching between clips
-
----
-
-# Screenshots (TBD)
-
-# Tech Stack
-
-## Language
-
-- Kotlin
-
-## UI
-
-- Jetpack Compose
-- Material 3
-- Navigation Compose
-
-## Audio
-
-- AndroidX Media3
-- ExoPlayer
-
-## Storage
-
-- Preferences DataStore
-
-## Build Tools
-
-- Gradle
-- Version Catalogs
-
----
-
-# Project Structure
+The app follows a layered, MVVM-style structure. The ViewModel combines several `StateFlow`s (the clips, the favourite IDs, the clip that is playing, the loading and error state, and the layout mode) into a single UI state. The screen only renders that state and reports user actions back up.
 
 ```text
-app/
-│
-├── core/
-│   └── audio/
-│       ├── AudioPlayer
-│       └── MediaAudioPlayer
-│
-├── data/
-│   ├── clip/
-│   │   └── AssetClipDataSource
-│   ├── favourites/
-│   │   ├── FavouritesLocalDataSource
-│   │   └── FavouritesRepository
-│   └── domain/
-│       └── VoiceClip
-│
-├── ui/
-│   ├── library/
-│   │   ├── ClipLibraryScreen
-│   │   ├── ClipLibraryViewModel
-│   │   ├── ClipLibraryUIState
-│   │   ├── ClipSectionHeader
-│   │   └── ViewMode
-│   ├── navigation/
-│   └── theme/
-│
-├── assets/
-│   ├── audio/
-│   └── voice_clips.json
-│
-└── MainActivity.kt
+UI (Compose)  ─►  ViewModel  ─►  Repository / data sources  ─►  assets, DataStore
+     ▲               │
+     └── UI state ◄──┘
+                     └─►  AudioPlayer (Media3 / ExoPlayer)
 ```
 
----
+### Project structure
 
-# Running the Project
-
-Clone the repository.
-
-```bash
-git clone https://github.com/msenetho/winnie-app.git
+```text
+app/src/main/
+├── java/com/msenetho/winnie_app/
+│   ├── core/audio/
+│   │   ├── AudioPlayer              interface for playback
+│   │   └── MediaAudioPlayer         ExoPlayer implementation
+│   ├── data/
+│   │   ├── clip/
+│   │   │   └── AssetClipDataSource  reads voice_clips.json from assets
+│   │   └── favourites/
+│   │       ├── FavouritesLocalDataSource   DataStore storage
+│   │       └── FavouritesRepository
+│   ├── domain/model/
+│   │   └── VoiceClip
+│   ├── ui/
+│   │   ├── library/                 screen, ViewModel, UI state, layout mode
+│   │   ├── navigation/              AppNavHost and bottom navigation
+│   │   └── theme/                   colours, typography, theme
+│   └── MainActivity.kt
+└── assets/
+    ├── audio/                       the .wav clips
+    └── voice_clips.json             clip IDs, titles, and file paths
 ```
 
-Open the project in Android Studio.
+## Tech stack
 
-Allow Gradle to sync and build the project.
+| Area | Tools |
+| --- | --- |
+| Language | Kotlin |
+| UI | Jetpack Compose, Material 3, Navigation Compose |
+| Audio | AndroidX Media3 (ExoPlayer) |
+| State | ViewModel, Kotlin Coroutines and Flow |
+| Storage | Preferences DataStore |
+| Build | Gradle (Kotlin DSL) with a version catalog |
 
-Run the application on an Android emulator or physical device.
+## Running the project
 
----
+1. Clone the repository:
 
-# Future Improvements
+   ```bash
+   git clone https://github.com/msenetho/winnie-app.git
+   ```
 
-- Search and filtering
-- Playlist support
-- Recently played section
-- Material You dynamic colors
-- Share favorite quotes
-- Downloadable clip packs
-- Custom categories
-- Widget support
-- Cloud synchronization
+2. Open it in Android Studio and let Gradle sync.
+3. Run it on an emulator or a physical device (Android 7.0 / API 24 or higher).
 
----
+## Roadmap
 
-# What I Learned
+This is where I'd like to take the app next. I'll pick these up one at a time as I learn the pieces they need.
 
-This project helped strengthen my understanding of:
+**Done**
 
-- Kotlin
-- Jetpack Compose
-- State management in Compose
-- MVVM architecture
-- AndroidX Media3
-- Repository pattern
-- Preferences DataStore
-- Managing local assets
-- Building reusable UI components
+- [x] Clip library with playback
+- [x] Favourites that persist
+- [x] List and grid layouts
+- [x] Themed Material 3 UI and app icon
 
----
+**In progress**
 
-# Acknowledgements
+- [ ] Favourites section
 
-- Android Jetpack
-- AndroidX Media3
-- Winnie the Pooh characters belong to their respective copyright holders.
+**Coming soon**
 
----
+- [ ] "About" page, added to the bottom navigation bar
+- [ ] Tests for the ViewModel and repositories
 
-# Author
+## What I'm learning
+
+- Building screens in Jetpack Compose and keeping them stateless
+- Modelling UI state with `StateFlow` and `combine`
+- ViewModels and a simple repository layer
+- Playing audio with Media3 and tying playback state back to the UI
+- Persisting data with Preferences DataStore
+- Splitting an app into `core`, `data`, `domain`, and `ui` packages
+
+## Screenshots
+
+Coming soon.
+
+## Author
 
 **Matthew Senetho**
+Computer Science & Computer Engineering, University of Arkansas
+GitHub: [@msenetho](https://github.com/msenetho)
 
-Computer Science & Computer Engineering
+## License
 
-University of Arkansas
-
-GitHub: https://github.com/msenetho
-
----
-
-# License
-
-This repository is intended for educational and portfolio purposes.
+This repository is for learning and portfolio purposes.
